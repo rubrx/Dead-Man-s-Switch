@@ -26,9 +26,10 @@ export default async function Home() {
         </Link>
         <Link
           href={isSignedIn ? "/dashboard" : "/sign-in"}
-          className="text-sm text-ink-soft hover:text-ink transition-colors"
+          className="inline-flex items-center gap-2 rounded-full border border-line bg-surface/40 backdrop-blur px-5 py-2 text-sm font-medium text-ink hover:border-line-strong hover:bg-surface transition-colors"
         >
-          {isSignedIn ? "Dashboard →" : "Sign in →"}
+          {isSignedIn ? "Open dashboard" : "Sign in"}
+          <span aria-hidden className="text-ink-mute">→</span>
         </Link>
       </header>
 
