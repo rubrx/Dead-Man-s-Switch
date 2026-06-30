@@ -14,7 +14,7 @@ you never check in.
 
 - **Next.js 16** (App Router) + React 19
 - **Neon Postgres** via Drizzle ORM
-- **Resend** for transactional email
+- **Nodemailer + Gmail SMTP** for transactional email
 - **jose** for signed session cookies
 - **AES-256-GCM** for message encryption at rest
 - **Vercel Cron** for the dispatcher
@@ -44,8 +44,8 @@ you never check in.
 ```bash
 pnpm install
 cp .env.example .env.local
-# fill in DATABASE_URL, SESSION_SECRET, ENCRYPTION_KEY, RESEND_API_KEY,
-# CRON_SECRET, NEXT_PUBLIC_APP_URL
+# fill in DATABASE_URL, SESSION_SECRET, ENCRYPTION_KEY,
+# GMAIL_USER, GMAIL_APP_PASSWORD, CRON_SECRET, NEXT_PUBLIC_APP_URL
 pnpm db:push
 pnpm dev
 ```
@@ -64,8 +64,10 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 4. The cron is configured in `vercel.json` to fire hourly. Vercel Hobby plan
    only allows daily; if you're on Hobby, change the schedule to
    `0 9 * * *` (daily at 9am UTC) or upgrade to Pro for hourly.
-5. Verify a sending domain in Resend if you want email From: something other
-   than `onboarding@resend.dev`, and update `FROM_ADDRESS` in `lib/email.ts`.
+5. Email is sent via Gmail SMTP using `GMAIL_USER` + `GMAIL_APP_PASSWORD`.
+   Generate the app password at https://myaccount.google.com/apppasswords
+   (requires 2-Step Verification on the Google account). Free Gmail caps
+   outbound at ~500 emails/day, which is plenty for this app.
 
 ## How the dispatcher decides
 

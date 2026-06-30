@@ -1,8 +1,32 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const GMAIL_USER = process.env.GMAIL_USER;
+const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
 
-const FROM_ADDRESS = "Dead Man's Switch <onboarding@resend.dev>";
+if (!GMAIL_USER || !GMAIL_APP_PASSWORD) {
+  console.warn(
+    "[email] GMAIL_USER or GMAIL_APP_PASSWORD is missing — outbound email will fail.",
+  );
+}
+
+const FROM_ADDRESS = `Dead Man's Switch <${GMAIL_USER ?? "noreply@example.com"}>`;
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: GMAIL_USER,
+    pass: GMAIL_APP_PASSWORD,
+  },
+});
+
+// Headers that mark a message as high priority across major clients (Gmail,
+// Apple Mail, Outlook). Used sparingly — only for genuinely time-critical
+// messages, since overuse trains spam filters against us.
+const HIGH_PRIORITY_HEADERS = {
+  "X-Priority": "1",
+  "X-MSMail-Priority": "High",
+  Importance: "high",
+} as const;
 
 function shell(title: string, body: string): string {
   return `<!doctype html>
@@ -36,10 +60,19 @@ function shell(title: string, body: string): string {
 }
 
 export async function sendMagicLinkEmail(email: string, link: string): Promise<void> {
-  await resend.emails.send({
+  const text = `Sign in to Dead Man's Switch
+
+Tap the link below to sign in. This link is good for 15 minutes.
+
+${link}
+
+If you didn't request this, you can ignore it.`;
+
+  await transporter.sendMail({
     from: FROM_ADDRESS,
     to: email,
     subject: "Your sign-in link",
+    text,
     html: shell(
       "Sign in",
       `
@@ -52,6 +85,7 @@ export async function sendMagicLinkEmail(email: string, link: string): Promise<v
         <p style="font-size:13px;color:#8a8a96;">If you didn't request this, you can ignore it.</p>
       `,
     ),
+    headers: HIGH_PRIORITY_HEADERS,
   });
 }
 
@@ -80,10 +114,18 @@ export async function sendReminderEmail(input: ReminderInput): Promise<void> {
     minute: "2-digit",
   });
 
-  await resend.emails.send({
+  const text = `Your switch "${switchTitle}" will fire ${urgency} (${niceDeadline}) if you don't check in.
+
+If it does fire, the message goes to ${recipientEmail}.
+
+Check in here (one click, no login needed):
+${checkinLink}`;
+
+  await transporter.sendMail({
     from: FROM_ADDRESS,
     to,
     subject,
+    text,
     html: shell(
       type === "1_day" ? "One day left" : "One week left",
       `
@@ -97,6 +139,8 @@ export async function sendReminderEmail(input: ReminderInput): Promise<void> {
         <p style="font-size:13px;color:#8a8a96;">One click resets the deadline. No login needed.</p>
       `,
     ),
+    // Only the 1-day reminder is urgent enough to mark high priority.
+    headers: type === "1_day" ? HIGH_PRIORITY_HEADERS : undefined,
   });
 }
 
@@ -109,10 +153,24 @@ type DeliveryInput = {
 
 export async function sendDeliveryEmail(input: DeliveryInput): Promise<void> {
   const { to, senderEmail, switchTitle, message } = input;
-  await resend.emails.send({
+
+  const text = `${senderEmail} set up a Dead Man's Switch to send you this message if they ever went quiet. They didn't check in by the deadline.
+
+---
+
+${message}
+
+---
+
+This message was held encrypted until delivery and is not stored after being sent.`;
+
+  await transporter.sendMail({
     from: FROM_ADDRESS,
+    // Replies go to the actual person, not the system mailbox.
+    replyTo: senderEmail,
     to,
     subject: `A message from ${senderEmail}`,
+    text,
     html: shell(
       escapeHtml(switchTitle),
       `
@@ -127,6 +185,7 @@ export async function sendDeliveryEmail(input: DeliveryInput): Promise<void> {
         </p>
       `,
     ),
+    headers: HIGH_PRIORITY_HEADERS,
   });
 }
 
