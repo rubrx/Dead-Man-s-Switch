@@ -21,8 +21,7 @@ export async function POST(req: NextRequest) {
     expiresAt,
   });
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const link = `${baseUrl}/api/auth/verify?token=${token}`;
+  const link = `${req.nextUrl.origin}/api/auth/verify?token=${token}`;
 
   await sendMagicLinkEmail(normalizedEmail, link);
 

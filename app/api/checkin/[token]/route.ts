@@ -2,14 +2,14 @@ import { db } from "@/db";
 import { switches } from "@/db/schema";
 import { applyCheckin } from "@/lib/checkin";
 import { eq } from "drizzle-orm";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  _req: Request,
+  req: NextRequest,
   ctx: { params: Promise<{ token: string }> },
 ): Promise<Response> {
   const { token } = await ctx.params;
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const baseUrl = req.nextUrl.origin;
 
   if (!token) {
     return NextResponse.redirect(`${baseUrl}/checked-in?status=invalid`);

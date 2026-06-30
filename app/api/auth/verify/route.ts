@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get("token");
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const baseUrl = req.nextUrl.origin;
 
   if (!token) {
     return NextResponse.redirect(`${baseUrl}/sign-in?error=missing_token`);

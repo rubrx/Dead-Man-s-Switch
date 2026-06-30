@@ -123,7 +123,12 @@ async function deliverAndClose(input: DeliverInput): Promise<void> {
 }
 
 export function getBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL;
+  const vercelProd = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (vercelProd) return `https://${vercelProd}`;
+  const vercelDeploy = process.env.VERCEL_URL;
+  if (vercelDeploy) return `https://${vercelDeploy}`;
+  return "http://localhost:3000";
 }
 
 export async function findOverdueCount(): Promise<number> {
