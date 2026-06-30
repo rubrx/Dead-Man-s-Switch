@@ -7,9 +7,17 @@ export type DeadlineDisplay = {
   msRemaining: number;
 };
 
-export function describeDeadline(deadline: Date, now: Date = new Date()): DeadlineDisplay {
-  const msRemaining = deadline.getTime() - now.getTime();
-  const absoluteWhen = deadline.toLocaleString(undefined, {
+function asDate(value: Date | string): Date {
+  return value instanceof Date ? value : new Date(value);
+}
+
+export function describeDeadline(
+  deadline: Date | string,
+  now: Date = new Date(),
+): DeadlineDisplay {
+  const d = asDate(deadline);
+  const msRemaining = d.getTime() - now.getTime();
+  const absoluteWhen = d.toLocaleString(undefined, {
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -42,8 +50,12 @@ export function describeDeadline(deadline: Date, now: Date = new Date()): Deadli
   return { label, sublabel: absoluteWhen, tone, msRemaining };
 }
 
-export function describeRelative(date: Date, now: Date = new Date()): string {
-  const diff = now.getTime() - date.getTime();
+export function describeRelative(
+  date: Date | string,
+  now: Date = new Date(),
+): string {
+  const d = asDate(date);
+  const diff = now.getTime() - d.getTime();
   if (diff < 0) return "just now";
   const sec = Math.floor(diff / 1000);
   if (sec < 60) return "just now";

@@ -2,17 +2,23 @@ import { Countdown } from "@/components/Countdown";
 import { SwitchActions } from "@/components/SwitchActions";
 import { describeRelative } from "@/lib/format";
 
+// Date | string because Drizzle's neon-http returns Date for typed timestamp
+// columns but plain strings for raw sql<> aggregates like MAX(checked_in_at).
 type SwitchRow = {
   id: string;
   title: string;
   recipientEmail: string;
   intervalDays: number;
-  deadline: Date;
+  deadline: Date | string;
   status: "active" | "sent" | "cancelled";
-  createdAt: Date;
-  sentAt: Date | null;
-  lastCheckedInAt: Date | null;
+  createdAt: Date | string;
+  sentAt: Date | string | null;
+  lastCheckedInAt: Date | string | null;
 };
+
+function toDate(v: Date | string): Date {
+  return v instanceof Date ? v : new Date(v);
+}
 
 type Props = {
   sw: SwitchRow;
@@ -49,7 +55,7 @@ export function SwitchCard({ sw }: Props) {
 
         {isActive && (
           <div className="shrink-0 text-right">
-            <Countdown deadlineISO={sw.deadline.toISOString()} />
+            <Countdown deadlineISO={toDate(sw.deadline).toISOString()} />
           </div>
         )}
         {sw.status === "sent" && (
