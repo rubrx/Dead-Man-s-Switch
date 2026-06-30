@@ -1,26 +1,51 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-canvas: oklch(11% 0.008 270);
+  --color-surface: oklch(15% 0.01 270);
+  --color-surface-2: oklch(19% 0.012 270);
+  --color-line: oklch(26% 0.012 270);
+  --color-line-strong: oklch(36% 0.014 270);
+
+  --color-ink: oklch(96% 0.005 80);
+  --color-ink-soft: oklch(76% 0.014 80);
+  --color-ink-mute: oklch(54% 0.012 80);
+
+  --color-ember: oklch(78% 0.14 62);
+  --color-ember-deep: oklch(62% 0.16 50);
+  --color-ok: oklch(74% 0.12 158);
+  --color-warn: oklch(82% 0.16 78);
+  --color-danger: oklch(70% 0.2 22);
+
+  --font-serif: "Instrument Serif", ui-serif, Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: oklch(78% 0.14 62 / 0.35);
+  color: var(--color-ink);
+}
+
+/* Subtle film grain on dark surfaces — adds depth without distraction */
+.grain {
+  position: relative;
+  isolation: isolate;
+}
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
