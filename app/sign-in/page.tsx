@@ -1,5 +1,7 @@
 "use client";
 
+import { primaryButtonLarge } from "@/components/ui/buttonStyles";
+import { ArrowRightIcon } from "@/components/ui/icons";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -80,9 +82,12 @@ export default function SignInPage() {
             <button
               type="submit"
               disabled={status === "sending"}
-              className="w-full rounded-full bg-ember text-canvas px-5 py-3 text-sm font-medium hover:bg-ember-deep disabled:opacity-50 transition-colors"
+              className={`${primaryButtonLarge} w-full`}
             >
-              {status === "sending" ? "Sending…" : "Send me a link"}
+              <span>{status === "sending" ? "Sending…" : "Send me a link"}</span>
+              {status !== "sending" && (
+                <ArrowRightIcon className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+              )}
             </button>
             {status === "error" && (
               <p className="text-sm text-danger" role="alert">

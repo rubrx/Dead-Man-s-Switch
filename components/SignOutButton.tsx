@@ -1,5 +1,7 @@
 "use client";
 
+import { SignOutIcon } from "@/components/ui/icons";
+import { secondaryButtonSmall } from "@/components/ui/buttonStyles";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -19,9 +21,11 @@ export function SignOutButton() {
       type="button"
       onClick={handleClick}
       disabled={busy}
-      className="text-xs text-ink-mute hover:text-ink-soft disabled:opacity-50 transition-colors"
+      aria-label="Sign out"
+      className={secondaryButtonSmall}
     >
-      {busy ? "Signing out…" : "Sign out"}
+      <SignOutIcon className="h-3.5 w-3.5" />
+      <span>{busy ? "Signing out…" : "Sign out"}</span>
     </button>
   );
 }

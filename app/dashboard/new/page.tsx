@@ -1,5 +1,7 @@
 "use client";
 
+import { primaryButtonLarge } from "@/components/ui/buttonStyles";
+import { ArrowRightIcon } from "@/components/ui/icons";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
@@ -159,9 +161,12 @@ export default function NewSwitchPage() {
             <button
               type="submit"
               disabled={isSaving}
-              className="rounded-full bg-ember text-canvas px-6 py-2.5 text-sm font-medium hover:bg-ember-deep disabled:opacity-50 transition-colors"
+              className={primaryButtonLarge}
             >
-              {isSaving ? "Arming…" : "Arm the switch"}
+              <span>{isSaving ? "Arming…" : "Arm the switch"}</span>
+              {!isSaving && (
+                <ArrowRightIcon className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+              )}
             </button>
           </div>
         </form>

@@ -1,5 +1,7 @@
 import { SignOutButton } from "@/components/SignOutButton";
 import { SwitchCard } from "@/components/SwitchCard";
+import { primaryButton } from "@/components/ui/buttonStyles";
+import { PlusIcon } from "@/components/ui/icons";
 import { db } from "@/db";
 import { checkinLog, switches, users } from "@/db/schema";
 import { getSession } from "@/lib/session";
@@ -44,20 +46,15 @@ export default async function DashboardPage() {
   return (
     <main className="min-h-screen">
       <header className="mx-auto flex w-full max-w-3xl items-center justify-between px-6 pt-10 pb-6">
-        <Link href="/" className="group inline-flex items-baseline gap-2">
-          <span className="font-serif text-xl italic text-ink">Dead Man&apos;s</span>
+        <Link href="/" className="group inline-flex items-center gap-2">
+          <span className="font-serif text-xl italic text-ink leading-none">
+            Dead Man&apos;s
+          </span>
           <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink-mute group-hover:text-ink-soft transition-colors">
             switch
           </span>
         </Link>
-        <div className="flex items-center gap-4 text-xs">
-          {user && (
-            <span className="font-mono text-ink-mute hidden sm:inline">
-              {user.email}
-            </span>
-          )}
-          <SignOutButton />
-        </div>
+        <IdentityCluster email={user?.email} />
       </header>
 
       <section className="mx-auto w-full max-w-3xl px-6 pb-24">
@@ -72,11 +69,9 @@ export default async function DashboardPage() {
                 : `${active.length} armed. Check in before the deadline to keep them quiet.`}
             </p>
           </div>
-          <Link
-            href="/dashboard/new"
-            className="shrink-0 inline-flex items-center gap-2 rounded-full bg-ember text-canvas px-4 py-2 text-sm font-medium hover:bg-ember-deep transition-colors"
-          >
-            <span aria-hidden>+</span> New switch
+          <Link href="/dashboard/new" className={`${primaryButton} shrink-0`}>
+            <PlusIcon className="h-3.5 w-3.5" />
+            <span>New switch</span>
           </Link>
         </div>
 
@@ -109,6 +104,25 @@ export default async function DashboardPage() {
   );
 }
 
+function IdentityCluster({ email }: { email: string | undefined }) {
+  return (
+    <div className="flex items-center gap-3">
+      {email && (
+        <div className="hidden sm:inline-flex items-center gap-2 rounded-full border border-line bg-surface/40 backdrop-blur pl-1.5 pr-3 py-1">
+          <span
+            className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-ember/20 text-[10px] font-mono uppercase text-ember"
+            aria-hidden
+          >
+            {email.charAt(0)}
+          </span>
+          <span className="font-mono text-[11px] text-ink-soft">{email}</span>
+        </div>
+      )}
+      <SignOutButton />
+    </div>
+  );
+}
+
 function EmptyState() {
   return (
     <div className="mt-12 rounded-2xl border border-dashed border-line bg-surface/40 px-8 py-16 text-center">
@@ -119,11 +133,9 @@ function EmptyState() {
         Write the message now. Pick when it should send if you go quiet. You can
         always check in to reset the clock.
       </p>
-      <Link
-        href="/dashboard/new"
-        className="mt-8 inline-flex items-center gap-2 rounded-full bg-ember text-canvas px-5 py-2.5 text-sm font-medium hover:bg-ember-deep transition-colors"
-      >
-        Write your first switch
+      <Link href="/dashboard/new" className={`${primaryButton} mt-8`}>
+        <PlusIcon className="h-3.5 w-3.5" />
+        <span>Write your first switch</span>
       </Link>
     </div>
   );

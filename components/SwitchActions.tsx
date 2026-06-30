@@ -1,5 +1,11 @@
 "use client";
 
+import { CheckIcon } from "@/components/ui/icons";
+import {
+  dangerGhostButton,
+  ghostButton,
+  primaryButton,
+} from "@/components/ui/buttonStyles";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -50,14 +56,14 @@ export function SwitchActions({ switchId }: Props) {
               type="button"
               onClick={handleCancel}
               disabled={cancelling}
-              className="rounded-md border border-danger/40 text-danger hover:bg-danger/10 px-2.5 py-1 text-xs font-medium disabled:opacity-50"
+              className={dangerGhostButton}
             >
               {cancelling ? "Cancelling…" : "Yes, cancel"}
             </button>
             <button
               type="button"
               onClick={() => setConfirming(false)}
-              className="text-xs text-ink-mute hover:text-ink-soft px-2 py-1"
+              className={ghostButton}
             >
               Keep
             </button>
@@ -67,7 +73,7 @@ export function SwitchActions({ switchId }: Props) {
             <button
               type="button"
               onClick={() => setConfirming(true)}
-              className="text-xs text-ink-mute hover:text-ink-soft px-2 py-1"
+              className={ghostButton}
             >
               Cancel
             </button>
@@ -75,9 +81,10 @@ export function SwitchActions({ switchId }: Props) {
               type="button"
               onClick={handleCheckin}
               disabled={checkingIn}
-              className="rounded-md bg-ink text-canvas px-3.5 py-1.5 text-sm font-medium hover:bg-ink-soft disabled:opacity-50 transition-colors"
+              className={primaryButton}
             >
-              {checkingIn ? "Checking in…" : "Check in"}
+              <CheckIcon className="h-3.5 w-3.5" />
+              <span>{checkingIn ? "Checking in…" : "Check in"}</span>
             </button>
           </>
         )}

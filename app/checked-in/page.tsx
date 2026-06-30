@@ -1,3 +1,5 @@
+import { primaryButton } from "@/components/ui/buttonStyles";
+import { ArrowRightIcon } from "@/components/ui/icons";
 import Link from "next/link";
 
 type Search = {
@@ -43,11 +45,9 @@ export default async function CheckedInPage({
           </p>
         )}
         <div className="mt-10">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 rounded-full bg-ember text-canvas px-5 py-2.5 text-sm font-medium hover:bg-ember-deep transition-colors"
-          >
-            See your dashboard →
+          <Link href="/dashboard" className={primaryButton}>
+            <span>See your dashboard</span>
+            <ArrowRightIcon className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
       </Frame>
